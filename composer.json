@@ -17,6 +17,11 @@
   "require-dev": {
     "composer/composer": "^1.2"
   },
+  "autoload": {
+    "psr-4": {
+      "IchHabRecht\\GitFlow\\": "src/GitFlow/"
+    }
+  },
   "extra": {
     "class": "IchHabRecht\\GitFlow\\Plugin"
   }
