@@ -16,7 +16,7 @@ class Plugin implements PluginInterface
     /**
      * @var PackageInterface[]
      */
-    protected static $packages;
+    protected $packages;
 
     /**
      * Apply plugin modifications to Composer
@@ -26,21 +26,24 @@ class Plugin implements PluginInterface
      */
     public function activate(Composer $composer, IOInterface $io)
     {
-        static::adjustGitFlowDependencies($composer);
+        $stability = trim((string)getenv('STABILITY'));
+        if (empty($stability) || 'master' === $stability) {
+            return;
+        }
+
+        $io->write('> ichhabrecht/composer-git-flow-plugin');
+        $io->write('  - using STABILITY=' . $stability);
+        $this->adjustGitFlowDependencies($composer, $stability);
     }
 
     /**
      * Adjusts package requirements depending on the stability environment setting
      *
      * @param Composer $composer
+     * @param string $stability
      */
-    public static function adjustGitFlowDependencies(Composer $composer)
+    protected function adjustGitFlowDependencies(Composer $composer, $stability)
     {
-        $stability = trim((string)getenv('STABILITY'));
-        if (empty($stability) || 'master' === $stability) {
-            return;
-        }
-
         $newRequires = [];
         $versionParser = new VersionParser();
         foreach ($composer->getPackage()->getRequires() as $packageName => $package) {
@@ -70,18 +73,18 @@ class Plugin implements PluginInterface
      * @param Composer $composer
      * @return string
      */
-    protected static function findStabilityBranch($packageName, $stability, Composer $composer)
+    protected function findStabilityBranch($packageName, $stability, Composer $composer)
     {
-        if (static::$packages === null) {
-            static::initializePackages($composer);
+        if ($this->packages === null) {
+            $this->initializePackages($composer);
         }
 
-        if (!isset(static::$packages[$packageName])) {
+        if (!isset($this->packages[$packageName])) {
             return 'dev-master';
         }
 
         /** @var Package $package */
-        foreach (static::$packages[$packageName] as $package) {
+        foreach ($this->packages[$packageName] as $package) {
             if (0 === strpos($package->getPrettyVersion(), 'dev-' . $stability)) {
                 return $package->getPrettyVersion();
             }
@@ -95,7 +98,7 @@ class Plugin implements PluginInterface
      *
      * @param Composer $composer
      */
-    protected static function initializePackages(Composer $composer)
+    protected function initializePackages(Composer $composer)
     {
         $repositoryManager = $composer->getRepositoryManager();
         /** @var RepositoryInterface $repository */
@@ -104,7 +107,7 @@ class Plugin implements PluginInterface
                 continue;
             }
             foreach ($repository->getPackages() as $package) {
-                static::$packages[$package->getName()] = $package->getRepository()->getPackages();
+                $this->packages[$package->getName()] = $package->getRepository()->getPackages();
             }
         }
     }
