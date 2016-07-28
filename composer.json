@@ -1,6 +1,6 @@
 {
   "name": "ichhabrecht/composer-git-flow-plugin",
-  "description": "This Composer plugin enables the possibility to switch between Git Flow branches `on the fly`",
+  "description": "This plugin allows to use repositories using the Git Flow workflow (or any other branching model) with Composer",
   "type": "composer-plugin",
   "authors": [
     {

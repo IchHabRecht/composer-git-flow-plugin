@@ -1,6 +1,6 @@
 # composer-git-flow-plugin
 
-This plugin allows to use repositories using the Git Flow workflow (or any other branching model) with composer.
+This plugin allows to use repositories using the Git Flow workflow (or any other branching model) with Composer.
 
 ## Installation
 
