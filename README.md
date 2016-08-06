@@ -4,15 +4,10 @@ This plugin allows to use repositories using the Git Flow workflow (or any other
 
 ## Installation
 
-First you have to require the plugin. Make sure to run **either** `composer require` **or** `composer install` before you update to the 
-needed branch.
+First you have to require the plugin. 
 
 ```bash
 $ composer require ichhabrecht/composer-git-flow-plugin
-```
-
-```bash
-$ composer install
 ```
 
 ## Usage
@@ -35,16 +30,17 @@ To define the repositories for which the plugin should change the used branch, i
 ```
 
 To select the branch your repositories should use, you have to set an environment variable `STABILITY` and update your 
-dependencies.
+dependencies. The new composer command `git-flow-update` makes sure only repositories with *dev-master* dependency
+constraints are updated.
 
 ```bash
-$ STABILITY=develop composer update
+$ STABILITY=develop composer git-flow-update
 ```
 
 On Windows systems the command looks like that:
 
 ```bash
-$ SET STABILITY=develop && composer update
+$ SET STABILITY=develop && composer git-flow-update
 ```
 
 If you want to checkout your repositories with the latest release branch you can simply set the stability to `release`.
