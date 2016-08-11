@@ -51,17 +51,17 @@ class GitFlowUpdateCommand extends UpdateCommand
 
         $requires = $composer->getPackage()->getRequires();
         $newRequires = $this->adjustGitFlowPackages($requires);
-        $packages = array_diff($requires, $newRequires);
-        $composer->getPackage()->setRequires($newRequires);
+        $packages = array_keys($newRequires);
+        $composer->getPackage()->setRequires(array_merge($requires, $newRequires));
 
         if (!$input->getOption('no-dev')) {
             $requires = $this->adjustGitFlowPackages($composer->getPackage()->getDevRequires());
             $newRequires = $this->adjustGitFlowPackages($requires);
-            $packages += array_diff($requires, $newRequires);
-            $composer->getPackage()->setDevRequires($newRequires);
+            $packages += array_keys($newRequires);
+            $composer->getPackage()->setDevRequires(array_merge($requires, $newRequires));
         }
 
-        $input->setArgument('packages', array_keys($packages));
+        $input->setArgument('packages', $packages);
         $io->writeError('');
 
         return parent::execute($input, $output);
@@ -78,9 +78,7 @@ class GitFlowUpdateCommand extends UpdateCommand
         $newRequires = [];
         $versionParser = new VersionParser();
         foreach ($packages as $packageName => $package) {
-            if ('dev-master' !== $package->getPrettyConstraint()) {
-                $newRequires[] = $package;
-            } else {
+            if ('dev-master' === $package->getPrettyConstraint()) {
                 $branch = $this->findStabilityBranch($packageName);
                 $this->getIO()->writeError('  - Adjusting ' . $packageName . ' to ' . $branch);
                 $link = new Link(
