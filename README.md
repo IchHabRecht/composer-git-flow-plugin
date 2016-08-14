@@ -29,18 +29,12 @@ To define the repositories for which the plugin should change the used branch, i
 }
 ```
 
-To select the branch your repositories should use, you have to set an environment variable `STABILITY` and update your 
-dependencies. The new composer command `git-flow-update` makes sure only repositories with *dev-master* dependency
-constraints are updated.
+To select the branch your repositories should use, you have to call the composer command `git-flow-update` which
+makes sure only repositories with *dev-master* dependency constraints are updated. To specify the branch prefix use the 
+option `stability` of the command.
 
 ```bash
-$ STABILITY=develop composer git-flow-update
-```
-
-On Windows systems the command looks like that:
-
-```bash
-$ SET STABILITY=develop && composer git-flow-update
+$ composer git-flow-update --stability develop
 ```
 
 If you want to checkout your repositories with the latest release branch you can simply set the stability to `release`.
