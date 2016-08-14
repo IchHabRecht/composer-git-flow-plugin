@@ -9,6 +9,7 @@ use Composer\Repository\ComposerRepository;
 use Composer\Repository\RepositoryInterface;
 use Composer\Semver\VersionParser;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class GitFlowUpdateCommand extends UpdateCommand
@@ -30,7 +31,7 @@ class GitFlowUpdateCommand extends UpdateCommand
     {
         parent::configure();
         $this->setName('git-flow-update');
-        $this->stability = trim((string)getenv('STABILITY'));
+        $this->addOption('stability', '', InputOption::VALUE_OPTIONAL, 'Define the branch prefix which should be used to checkout your repositories');
     }
 
     /**
@@ -44,6 +45,14 @@ class GitFlowUpdateCommand extends UpdateCommand
     {
         $io = $this->getIO();
         $io->writeError('> ichhabrecht/composer-git-flow-plugin');
+
+        $this->stability = $input->getOption('stability');
+        $stability = trim((string)getenv('STABILITY'));
+        if (!empty($stability)) {
+            $io->writeError('Warning: You are using the deprecated environment variable `STABILITY`. Please use cli option --stability ' . $stability);
+            $this->stability = $stability;
+        }
+
         $io->writeError('  - using STABILITY=' . $this->stability);
         $io->writeError('');
 
